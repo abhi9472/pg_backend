@@ -91,9 +91,9 @@ const loginUser=asyncHandler(async(req,res)=>{
             throw new ApiError(400,"user doesnot exist")
         }
     console.log(user);
-    const checkpassword=await user.comparePassword(password);
+    const checkpass=await user.comparePassword(password);
 
-    if(!checkpassword)
+    if(!checkpass)
         {
             throw new ApiError(400,"Password is wrong")
         }
