@@ -5,6 +5,21 @@ import { User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 
+async function generateAccessRefreshToken(id){
+    try {
+        const user = await User.findOne(id).select("-password");
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+    
+        user.refreshToken = refreshToken;
+        await user.save({validateBeforeSave: false});
+    
+        return { accessToken, refreshToken };
+    } catch (error) {
+        throw new ApiError(401, `${error.message}`);
+    }
+}
+
 const registerUser =asyncHandler(async (req,res)=>{
     const{name,email,phoneNum,password,Username}=req.body
 
@@ -67,7 +82,7 @@ const loginUser=asyncHandler(async(req,res)=>{
     }
     
 
-    const user=User.findOne({
+    const user=await User.findOne({
         $or:[{Username},{email}]
     })
 
@@ -76,7 +91,7 @@ const loginUser=asyncHandler(async(req,res)=>{
             throw new ApiError(400,"user doesnot exist")
         }
     console.log(user);
-    const checkpassword=await user.isPasswordCorrect(password);
+    const checkpassword=await user.comparePassword(password);
 
     if(!checkpassword)
         {
@@ -88,24 +103,18 @@ const loginUser=asyncHandler(async(req,res)=>{
         secure:true
     }
 
+    const { accessToken, refreshToken } = await generateAccessRefreshToken(loginUser._id);
     return res
     .status(200)
-    .cookie("accesToken",accesToken,options)
-    .cookie("refreshToken",refreshToken,options)
-    .json(
-        new ApiResponse(
-            200,{
-
-                user:loginUser,accesToken,refreshToken
-
-            },
-            "User loged in successfully"
-        )
-    )
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(new ApiResponse(200, { user: loginUser }, "User logged in successfully")
+);
 })
 
+
 const logoutUser=asyncHandler(async(req,res)=>{
-    await user.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user._id,
         {
             $unset:{
@@ -118,22 +127,24 @@ const logoutUser=asyncHandler(async(req,res)=>{
         }
 
     )
+    
     const options = 
     {
         httpOnly: true,
         secure: true
     }
 
+
     return res
     .status(200)
-    .clearCookie("accesToken",accesToken,options)
-    .clearCookie("refreshToken",refreshToken,options)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
     .json(
-        new ApiResponse(200,{},"user log Out Done")
+        new ApiResponse(200,user,"user log Out Done")
        
     )
 })
 
 
 
-export {registerUser,loginUser,logoutUser}
+export { registerUser,loginUser,logoutUser }

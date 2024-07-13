@@ -5,17 +5,16 @@ import { User } from "../models/user.model.js";
 
 export const verifyJwt=asyncHandler(async(req,res,next)=>{
     try {
-        const token=req.cookies?.accesToken || req.header("Authorization")?.replace("Bearer ", "")
+        const token=req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
 
     if(!token)
         {
             throw new ApiError(401,"unauthorized request")
         }
 
-    const decodedToken=jwt.verify(token,process.env.ACCES_TOKEN_SECRET)
+    const decodedToken=jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
 
-    const user=User.findByid(decodedToken?._id).select("-refreshToken -password")
-
+    const user= await User.findById(decodedToken?._id).select("-refreshToken -password")
 
     if(!user)
         {
