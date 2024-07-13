@@ -58,5 +58,82 @@ const registerUser =asyncHandler(async (req,res)=>{
         new ApiResponse(200, createdUser, "User registered Successfully")
     )
 })
+const loginUser=asyncHandler(async(req,res)=>{
+    console.log("inside controller");
+    const {Username,email,password}=req.body
 
-export {registerUser}
+    if (!Username && !email) {
+        throw new ApiError(400, "username or email is required")
+    }
+    
+
+    const user=User.findOne({
+        $or:[{Username},{email}]
+    })
+
+    if(!user)
+        {
+            throw new ApiError(400,"user doesnot exist")
+        }
+    console.log(user);
+    const checkpassword=await user.isPasswordCorrect(password);
+
+    if(!checkpassword)
+        {
+            throw new ApiError(400,"Password is wrong")
+        }
+    const loginUser=await User.findById(user._id).select("-password -refreshToken")
+    const options={
+        httpOnly:true,
+        secure:true
+    }
+
+    return res
+    .status(200)
+    .cookie("accesToken",accesToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(
+        new ApiResponse(
+            200,{
+
+                user:loginUser,accesToken,refreshToken
+
+            },
+            "User loged in successfully"
+        )
+    )
+})
+
+const logoutUser=asyncHandler(async(req,res)=>{
+    await user.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset:{
+                refreshToken:1
+            }
+
+        },
+        {
+            new:true
+        }
+
+    )
+    const options = 
+    {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accesToken",accesToken,options)
+    .clearCookie("refreshToken",refreshToken,options)
+    .json(
+        new ApiResponse(200,{},"user log Out Done")
+       
+    )
+})
+
+
+
+export {registerUser,loginUser,logoutUser}
