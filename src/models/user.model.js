@@ -52,7 +52,13 @@ const userSchema =new Schema(
         phoneNum:{
             type:Number,
             required:true
+        },
+        role: {
+             type: String,
+              enum: ['user', 'admin'],
+              default: 'user' 
         }
+
 
     },
     {
@@ -60,6 +66,7 @@ const userSchema =new Schema(
     }
 
 )
+
 
 userSchema.pre("save", async function(next)
 {
