@@ -2,7 +2,7 @@ import { Router } from "express";
 import { loginUser, logoutUser, registerUser } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
-import { addProducts, allhomes } from "../controllers/products.controllers.js";
+import { addhome , allhomes, gethomedetail, getuserhome} from "../controllers/products.controllers.js";
 
 const router=Router()
 
@@ -25,14 +25,17 @@ router.route("/register").post(
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJwt,logoutUser)
 
-router.route("/addProducts").post(verifyJwt, upload.fields([
+router.route("/addhome").post(verifyJwt, upload.fields([
     {
         name: "image",
     }, 
     
 ]),
-    addProducts
+    addhome
 )
 router.route("/allhomes").post(allhomes);
+router.route("/getuserhome").post(verifyJwt,getuserhome);
+router.route("/gethomedetail").get(gethomedetail);
+// router.get('gethomedetail', gethomedetail);
 
 export default router

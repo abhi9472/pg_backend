@@ -4,12 +4,12 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApeError.js"; 
 import { Products } from "../models/product.model.js";
 import fs from 'fs';
-
-const addProducts = asyncHandler(async (req, res) => {
+import mongoose from "mongoose";
+const addhome = asyncHandler(async (req, res) => {
   const { location, size, lift, floor, Co_ed, phoneNum, price } = req.body;
   const uploader = req.user._id;
   const name=req.user.name;
-  console.log(name);
+//   console.log(name);
 
   if (req.files.length === 0) {
     throw new ApiError(400, "Please upload images");
@@ -37,7 +37,7 @@ const image = imageUrls
     lift,
     Co_ed,
     price,
-    createdBy: uploader,
+    uploader,
     name
   };
 
@@ -64,5 +64,47 @@ const allhomes=asyncHandler(async(req,res)=>{
     }
 })
 
+const getuserhome=asyncHandler(async(req,res)=>{
+    const user=req.user._id;
+    // console.log(user);
 
-export { addProducts ,allhomes};
+
+    try {
+        const homes=await Products.find({uploader:user});
+        if (homes.length === 0) {
+            return res.status(404).json({ message: "No homes available" });
+          }
+
+        return res.status(200).json(homes);
+
+        
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+        
+    }
+
+
+})
+
+const gethomedetail = asyncHandler(async (req, res) => {
+    const imageid = req.query._id;
+  
+    try {
+      const imageobj = await Products.findById(new mongoose.Types.ObjectId(String(imageid)));
+  
+      if (!imageobj) {
+        throw new ApiError(404, "Details not found");
+      }
+  
+      return res.status(200).json(imageobj);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
+    }
+  });
+  
+
+
+export { addhome ,allhomes,getuserhome,gethomedetail};

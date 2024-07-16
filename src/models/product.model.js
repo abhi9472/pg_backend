@@ -66,7 +66,13 @@ const productSchema=new Schema(
             required:true,
             default:'No'
 
-        }
+        },
+        uploader:
+        {
+            type:String,
+            
+
+        },
     }
     ,{
         timestamps:true
