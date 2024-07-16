@@ -8,6 +8,8 @@ import fs from 'fs';
 const addProducts = asyncHandler(async (req, res) => {
   const { location, size, lift, floor, Co_ed, phoneNum, price } = req.body;
   const uploader = req.user._id;
+  const name=req.user.name;
+  console.log(name);
 
   if (req.files.length === 0) {
     throw new ApiError(400, "Please upload images");
@@ -16,16 +18,16 @@ const addProducts = asyncHandler(async (req, res) => {
 // console.log(Array.isArray(req.files));
 
   let imageUrls = [];
-  console.log(req.files.image);
+//   console.log(req.files.image);
 for(let i = 0; i < req.files.image.length; i++){
     const files = req.files.image[i].path;
     const result = await uploadOnCloudinary(files);
-    console.log(result);
+    // console.log(result);
     imageUrls.push(result.url);
 }
 // console.log(imageUrls);
 const image = imageUrls
-console.log(image);
+// console.log(image);
   const newProduct = {
     image, // Save the URLs of the uploaded images
     location: location.toLowerCase(),
@@ -35,13 +37,15 @@ console.log(image);
     lift,
     Co_ed,
     price,
-    createdBy: uploader
+    createdBy: uploader,
+    name
   };
 
   try {
     const product = await Products.create(newProduct);
 
     // Add product reference to user
+    // console.log(product);
     await User.findByIdAndUpdate(req.user._id, { $push: { products: product._id } });
 
     return res.status(200).json({ message: "Images added successfully", product });
@@ -50,4 +54,15 @@ console.log(image);
   }
 });
 
-export { addProducts };
+const allhomes=asyncHandler(async(req,res)=>{
+    try {
+        const homes=await Products.find();
+        res.json(homes);
+    } catch (error) {
+        throw new ApiError(400,"No Products available");
+        
+    }
+})
+
+
+export { addProducts ,allhomes};
