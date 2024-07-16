@@ -66,13 +66,12 @@ const allhomes=asyncHandler(async(req,res)=>{
 
 const getuserhome=asyncHandler(async(req,res)=>{
     const user=req.user._id;
-    // console.log(user);
 
 
     try {
         const homes=await Products.find({uploader:user});
         if (homes.length === 0) {
-            return res.status(404).json({ message: "No homes available" });
+            return res.status(404).json({ message: "No Homes available" });
           }
 
         return res.status(200).json(homes);
