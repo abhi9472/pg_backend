@@ -146,6 +146,23 @@ const logoutUser=asyncHandler(async(req,res)=>{
     )
 })
 
+const userdetail=asyncHandler(async (req,res)=>{
+    const user=req.user._id;
+
+    try {
+        const admin=await User.findById(user);
+
+        if(!admin)
+            {
+                return res.status(401,"Admin not found");
+            }
+            return res.status(200).json(new ApiResponse(200, "User fetched successfully",admin));
+        } catch (error) {
+        return res.status(500).json({message:error.message});
+        
+    }
+})
 
 
-export { registerUser,loginUser,logoutUser}
+
+export { registerUser,loginUser,logoutUser,userdetail}

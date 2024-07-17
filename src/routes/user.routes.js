@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, logoutUser, registerUser } from "../controllers/user.controller.js";
+import { loginUser, logoutUser, registerUser, userdetail } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { addhome , allhomes, gethomedetail, getuserhome} from "../controllers/products.controllers.js";
@@ -34,6 +34,7 @@ router.route("/addhome").post(verifyJwt, upload.fields([
 ]),
     addhome
 )
+router.route("/userdetail").post(verifyJwt,userdetail);
 router.route("/allhomes").post(allhomes);
 router.route("/getuserhome").post(verifyJwt,getuserhome);
 router.route("/gethomedetail").get(gethomedetail);
