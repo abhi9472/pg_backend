@@ -35,17 +35,35 @@ const updateprice=asyncHandler(async(req,res)=>{
 
 })
 
-// const updatelocation=asyncHandler(async(req,res)=>{
-//     const{oldlocation,newlocation}=req.body;
+const updatelocation=asyncHandler(async(req,res)=>{
 
-//     const user=req.user._id;
-//     try {
+    const locationid=req.query.id;
+    const{newlocation}=req.body;
 
-        
-        
-//     } catch (error) {
-        
-//     }
-// })
+    // const user=req.user._id;
+    try {
+        const homes=await Products.findByIdAndUpdate(
+            locationid,
+                {location:newlocation},
+                {new:true}
+        )
 
-export {updateprice};
+        if(!homes)
+            {
+                return new ApiResponse(401,"No Homes available to update location");
+            }
+
+        return res.status(200).json(
+            200,
+            {},
+            "new location updated"
+        )
+
+
+    } catch (error) {
+        return res.status(500).json({message:error.message});
+        
+    }
+})
+
+export {updateprice,updatelocation};
