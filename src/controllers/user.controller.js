@@ -154,9 +154,9 @@ const userdetail=asyncHandler(async (req,res)=>{
 
         if(!admin)
             {
-                return res.status(401,"Admin not found");
+                return res.status(401).json(new ApiResponse(401, "Admin not found"));
             }
-            return res.status(200).json(new ApiResponse(200, "User fetched successfully",admin));
+            return res.status(200).json(new ApiResponse(200, "Admin fetched successfully",admin));
         } catch (error) {
         return res.status(500).json({message:error.message});
         
