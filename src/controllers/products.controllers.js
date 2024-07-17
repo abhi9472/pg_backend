@@ -6,10 +6,11 @@ import { Products } from "../models/product.model.js";
 import fs from 'fs';
 import mongoose from "mongoose";
 const addhome = asyncHandler(async (req, res) => {
-  const { location, size, lift, floor, Co_ed, phoneNum, price } = req.body;
+  const { location, size, lift, floor, Co_ed, price } = req.body;
   const uploader = req.user._id;
   const name=req.user.name;
 //   console.log(name);
+    const phoneNum=req.user.phoneNum;
 
   if (req.files.length === 0) {
     throw new ApiError(400, "Please upload images");

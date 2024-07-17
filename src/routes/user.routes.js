@@ -3,7 +3,7 @@ import { loginUser, logoutUser, registerUser } from "../controllers/user.control
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { addhome , allhomes, gethomedetail, getuserhome} from "../controllers/products.controllers.js";
-import { updatelocation, updateprice } from "../controllers/updatehome.controllers.js";
+import { updatelocation, updatePhoneNum, updateprice } from "../controllers/updatehome.controllers.js";
 
 const router=Router()
 
@@ -41,5 +41,6 @@ router.route("/gethomedetail").get(gethomedetail);
 
 router.route("/updateprice").patch(verifyJwt,updateprice);
 router.route("/updatelocation").patch(verifyJwt,updatelocation);
+router.route("/updatephone").patch(verifyJwt,updatePhoneNum);
 
 export default router

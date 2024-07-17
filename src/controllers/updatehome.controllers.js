@@ -66,4 +66,27 @@ const updatelocation=asyncHandler(async(req,res)=>{
     }
 })
 
-export {updateprice,updatelocation};
+ const updatePhoneNum=asyncHandler(async (req,res)=>{
+    const id=req.user._id;
+    const {newnumber}=req.body;
+    try {
+        const home=await User.findByIdAndUpdate(
+            id,
+                {phoneNum:newnumber},
+                {
+                    new:true
+                }
+        )
+
+        if(!home)
+            {
+                return res.status(401,"No user is available to change number");
+            }
+            return res.status(200).json(new ApiResponse(200, "Number changed successfully", User));
+        } catch (error) {
+        return res.status(500).json({message:error.message});
+        
+    }
+ })
+
+export {updateprice,updatelocation,updatePhoneNum};
