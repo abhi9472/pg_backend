@@ -75,7 +75,7 @@ const registerUser =asyncHandler(async (req,res)=>{
     )
 })
 const loginUser=asyncHandler(async(req,res)=>{
-    console.log("inside controller");
+    // console.log("inside controller");
     const {Username,email,password}=req.body
 
     if (!Username && !email) {
@@ -91,7 +91,7 @@ const loginUser=asyncHandler(async(req,res)=>{
         {
             throw new ApiError(400,"user doesnot exist")
         }
-    console.log(user);
+    // console.log(user);
     const checkpass=await user.comparePassword(password);
 
     if(!checkpass)

@@ -37,6 +37,7 @@ const userSchema =new Schema(
         avatar:{
             type:String,
             required:true,
+            default: process.env.DEFAULT_AVATAR_USER_SCHEMA
         },
         password:{
             type:String,
