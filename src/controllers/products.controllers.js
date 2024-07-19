@@ -93,7 +93,12 @@ const gethomedetail = asyncHandler(async (req, res) => {
     const imageid = req.query._id;
   
     try {
-      const imageobj = await Products.findById(new mongoose.Types.ObjectId(String(imageid)));
+      const imageobj = await Products.findById(new mongoose.Types.ObjectId(String(imageid))).populate({
+        path:'uploader',
+        select:' -password -refreshToken'
+
+
+      }).lean().exec();
   
       if (!imageobj) {
         throw new ApiError(404, "Details not found");
