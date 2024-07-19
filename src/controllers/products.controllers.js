@@ -57,7 +57,10 @@ const image = imageUrls
 
 const allhomes=asyncHandler(async(req,res)=>{
     try {
-        const homes=await Products.find();
+        const homes=await Products.find().populate({
+            path:'uploader',
+            select:' -password -refreshToken'
+        }).lean().exec();
         res.json(homes);
     } catch (error) {
         throw new ApiError(400,"No Products available");

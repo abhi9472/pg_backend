@@ -1,4 +1,6 @@
 import mongoose  from "mongoose";
+import { User } from "./user.model.js";
+import { userdetail } from "../controllers/user.controller.js";
 
 const {Schema}=mongoose
 
@@ -67,12 +69,10 @@ const productSchema=new Schema(
             default:'No'
 
         },
-        uploader:
-        {
-            type:String,
-            
-
-        },
+        uploader: {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
     }
     ,{
         timestamps:true
@@ -84,6 +84,8 @@ const productSchema=new Schema(
 // })
 
 export const Products=mongoose.model("Products",productSchema)
+
+export const Uploader=mongoose.model("Uploader",productSchema);
 
 
 

@@ -37,7 +37,7 @@ const userSchema =new Schema(
         avatar:{
             type:String,
             required:true,
-            default: process.env.DEFAULT_AVATAR_USER_SCHEMA
+             default: process.env.DEFAULT_AVATAR_USER_SCHEMA,
         },
         password:{
             type:String,
@@ -59,6 +59,16 @@ const userSchema =new Schema(
               enum: ['user', 'admin'],
               default: 'user' 
         }
+        ,
+        productAdded: {
+            type: [
+                Schema.Types.ObjectId
+            ],
+            ref: "Products",
+            required: false,
+            default: []
+        }
+        
 
 
     },
