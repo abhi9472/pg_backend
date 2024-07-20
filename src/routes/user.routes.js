@@ -4,7 +4,7 @@ import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { isAdmin } from "../middlewares/isAdmin.middleware.js";
 import { addhome , allhomes, gethomedetail, getuserhome} from "../controllers/products.controllers.js";
-import { updateavatar, updatelocation, updatePhoneNum, updateprice } from "../controllers/updatehome.controllers.js";
+import { updateavatar, updatelocation, updatepassword, updatePhoneNum, updateprice } from "../controllers/updatehome.controllers.js";
 
 const router=Router()
 
@@ -30,6 +30,7 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJwt,logoutUser)
+router.route("/updatepassword").patch(verifyJwt,updatepassword);
 
 router.route("/addhome").post(verifyJwt,isAdmin, upload.fields([
     {

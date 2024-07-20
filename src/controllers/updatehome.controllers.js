@@ -140,4 +140,23 @@ const updatelocation=asyncHandler(async(req,res)=>{
     }
 });
 
-export {updateprice,updatelocation,updatePhoneNum,updateavatar};
+const updatepassword = asyncHandler(async(req, res) => {
+    const {oldpassword, newpassword} = req.body
+
+    
+
+    const user = await User.findById(req.user?._id)
+    const isPasswordCorrect = await user.comparePassword(oldpassword)
+
+    if (!isPasswordCorrect) {
+        throw new ApiError(400, "Invalid old password")
+    }
+
+    user.password = newpassword
+    await user.save({validateBeforeSave: false})
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"))
+})
+export {updateprice,updatelocation,updatePhoneNum,updateavatar,updatepassword};
