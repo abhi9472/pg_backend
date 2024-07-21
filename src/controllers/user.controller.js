@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
+import bcrypt from "bcrypt";
 
 
 async function generateAccessRefreshToken(id){
@@ -163,6 +164,33 @@ const userdetail=asyncHandler(async (req,res)=>{
     }
 })
 
+const forgotpassword=asyncHandler(async(req,res)=>{
+    // const id=req.user._id;
+
+    const {email,newpassword}=req.body;
+    try {
+
+        const user=await User.findOne({email});
+        if(!user)
+            {
+                throw new ApiError(401,"Email id is wrong");
+            }
+
+        
+        // const hashing=await bcrypt.genSalt(10);
+        // user.password=await bcrypt.hash(newpassword,hashing);
+        // console.log(user.password);
+        user.password = newpassword;
+        user.refreshToken=null;
+        user.save();
+
+        return res.status(200).json(new ApiResponse(200,{},"Password Reset Done"));
+    
+    } catch (error) {
+        return res.status(500).json({message:error.message});
+        
+    }
+})
 
 
-export { registerUser,loginUser,logoutUser,userdetail}
+export { registerUser,loginUser,logoutUser,userdetail,forgotpassword};

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, logoutUser, registerUser, userdetail } from "../controllers/user.controller.js";
+import { forgotpassword, loginUser, logoutUser, registerUser, userdetail } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { isAdmin } from "../middlewares/isAdmin.middleware.js";
@@ -49,5 +49,7 @@ router.route("/gethomedetail").get(gethomedetail);
 router.route("/updateprice").patch(verifyJwt,isAdmin,updateprice);
 router.route("/updatelocation").patch(verifyJwt,isAdmin,updatelocation);
 router.route("/updatephone").patch(verifyJwt,isAdmin,updatePhoneNum);
+
+router.route("/forgotpassword").post(forgotpassword);
 
 export default router
