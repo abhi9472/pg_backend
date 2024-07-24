@@ -3,7 +3,16 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
-import bcrypt from "bcrypt";
+import { mailUser } from "../utils/nodeMailer.js";
+import dotenv from "dotenv"
+
+dotenv.config();
+
+
+import jwt, { decode } from "jsonwebtoken"; 
+function getRandomInt() {
+    return Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
+}
 
 
 async function generateAccessRefreshToken(id){
@@ -176,10 +185,6 @@ const forgotpassword=asyncHandler(async(req,res)=>{
                 throw new ApiError(401,"Email id is wrong");
             }
 
-        
-        // const hashing=await bcrypt.genSalt(10);
-        // user.password=await bcrypt.hash(newpassword,hashing);
-        // console.log(user.password);
         user.password = newpassword;
         user.refreshToken=null;
         user.save();
@@ -192,5 +197,101 @@ const forgotpassword=asyncHandler(async(req,res)=>{
     }
 })
 
+const forgetPassword = asyncHandler(
+    async(req, res) => {
+        try {
+            const { email } = req.body;
+            const user = await User.findOne(
+                {
+                    email: email
+                }
+            ).select("-password -refreshToken");
+            
+            const verificationCode = getRandomInt();
+            const verificationString = jwt.sign(
+                {
+                    verificationCode: verificationCode
+                },
+                process.env.REGISTER_TOKEN_PASS
+            )
 
-export { registerUser,loginUser,logoutUser,userdetail,forgotpassword};
+            user.verificationCode = verificationString;
+            user.save({validateBeforeSave: false});
+    
+    
+            const message = `<div style="font-family: Arial, sans-serif; padding: 20px;">
+            <p style="font-size: 16px;">Authenticate your Email:</p>
+            <p style="font-size: 16px;">OTP: ${verificationCode}</p>
+            </div>`
+    
+            mailUser(user.email, "Forget Password Request", message);
+            console.log(verificationCode);
+    
+            res.status(200).json(
+                new ApiResponse(
+                    200,
+                    user,
+                    "OTP Send - Verify Email"
+                )
+            );
+        } catch (error) {
+            throw new ApiError(500, `${error.message}`);
+        }
+    }
+);
+  const verifyForgetOTP = asyncHandler(
+    async (req, res) => {
+        try {
+            const {OTP } = req.body;
+            const id=req.user._id;
+    
+            if(!OTP) throw new ApiError(401, "Enter OTP First");
+    
+            if(!id) throw new ApiError(500, "Use Link : Server Error");
+    
+            const userObj = await User.findById(id).select("-password");
+    
+            if(!userObj) throw new ApiError(404, "User Not Found");
+
+            const decodedOTP = jwt.verify(
+                userObj.verificationCode,
+                process.env.REGISTER_TOKEN_PASS
+            );
+    
+            if(decodedOTP.verificationCode !== Number(OTP)) throw new ApiError(409, "OTP Wrong");
+    
+            res.status(200).json(
+                new ApiResponse(
+                    200,
+                    {},
+                    "OTP Verified"
+                )
+            )
+        } catch (error) {
+            new ApiError(500, `${error.message}`);
+        }
+    }
+);
+
+  const newPassword = asyncHandler(async (req, res) => {
+    try {
+      const { userID, password } = req.body;
+      const user = await User.findById(userID);
+      
+      if (!user) throw new ApiError(404, 'User Not Found');
+  
+      user.password = password;
+  
+      await user.save({ validateBeforeSave: false });
+  
+      res.status(200).json(new ApiResponse(200, {}, 'Password Updated Successfully'));
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
+  
+
+
+
+export { registerUser,loginUser,logoutUser,userdetail,forgotpassword,forgetPassword,verifyForgetOTP,newPassword};

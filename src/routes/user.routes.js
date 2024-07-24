@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { forgotpassword, loginUser, logoutUser, registerUser, userdetail } from "../controllers/user.controller.js";
+import { forgetPassword, forgotpassword, loginUser, logoutUser, newPassword, registerUser, userdetail, verifyForgetOTP } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { isAdmin } from "../middlewares/isAdmin.middleware.js";
@@ -51,5 +51,10 @@ router.route("/updatelocation").patch(verifyJwt,isAdmin,updatelocation);
 router.route("/updatephone").patch(verifyJwt,isAdmin,updatePhoneNum);
 
 router.route("/forgotpassword").post(forgotpassword);
+router.route("/forgetpassword").post(forgetPassword);
+router.route("/verifyotp").post(verifyForgetOTP);
+router.route("/newpassword").post(newPassword);
+
+
 
 export default router
