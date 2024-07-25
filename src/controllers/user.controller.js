@@ -5,7 +5,6 @@ import { User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { mailUser } from "../utils/nodeMailer.js";
 import dotenv from "dotenv"
-
 dotenv.config();
 
 
@@ -196,6 +195,7 @@ const forgotpassword=asyncHandler(async(req,res)=>{
         
     }
 })
+let otp;
 
 const forgetPassword = asyncHandler(
     async(req, res) => {
@@ -214,8 +214,11 @@ const forgetPassword = asyncHandler(
                 },
                 process.env.REGISTER_TOKEN_PASS
             )
+            // otp=verificationCode;
 
             user.verificationCode = verificationString;
+            // user.save(user.verificationCode,{validateBeforeSave:false});
+            // User.save(user.verificationCode);
             user.save({validateBeforeSave: false});
     
     
@@ -239,11 +242,10 @@ const forgetPassword = asyncHandler(
         }
     }
 );
-  const verifyForgetOTP = asyncHandler(
+const verifyForgetOTP = asyncHandler(
     async (req, res) => {
         try {
-            const {OTP } = req.body;
-            const id=req.user._id;
+            const { id, OTP } = req.body;
     
             if(!OTP) throw new ApiError(401, "Enter OTP First");
     
@@ -252,6 +254,7 @@ const forgetPassword = asyncHandler(
             const userObj = await User.findById(id).select("-password");
     
             if(!userObj) throw new ApiError(404, "User Not Found");
+            console.log(userObj);
 
             const decodedOTP = jwt.verify(
                 userObj.verificationCode,

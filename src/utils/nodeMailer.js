@@ -5,14 +5,14 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: process.env.MAIL,
-        pass: process.env.MAIL_PASS
+        user: "mykhararpg@gmail.com",
+        pass:"ihbu sdmt bvtq ckxt"
     }
 });
 
 const mailUser = (receiverMail, subject, message) => {
     const mailOptions = {
-        from: process.env.MAIL,
+        from: "mykhararpg@gmail.com",
         to: receiverMail,
         subject: subject,
         html: message
