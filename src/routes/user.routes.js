@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { forgetPassword, forgotpassword, loginUser, logoutUser, newPassword, registerUser, userdetail, verifyForgetOTP } from "../controllers/user.controller.js";
+import { forgetPassword, forgotpassword, loginUser, logoutUser, newPassword, registerUser,createSuggestion, userdetail, verifyForgetOTP } from "../controllers/user.controller.js";
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { isAdmin } from "../middlewares/isAdmin.middleware.js";
@@ -54,6 +54,7 @@ router.route("/forgotpassword").post(forgotpassword);
 router.route("/forgetpassword").post(forgetPassword);
 router.route("/verifyotp").post(verifyForgetOTP);
 router.route("/newpassword").post(newPassword);
+router.route("/suggestion").post(createSuggestion);
 
 
 

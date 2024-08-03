@@ -5,6 +5,8 @@ import { User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { mailUser } from "../utils/nodeMailer.js";
 import dotenv from "dotenv"
+import { Suggestion } from "../models/suggestion.model.js";
+// const Suggestion = require('../models/suggestion.model.js'); 
 dotenv.config();
 
 
@@ -292,9 +294,26 @@ const verifyForgetOTP = asyncHandler(
       res.status(500).json({ message: error.message });
     }
   });
+  const createSuggestion = asyncHandler(async (req, res) => {
+    try {
+      const { suggestion } = req.body;
+  
+      if (!suggestion) {
+        return res.status(400).json({ message: 'Suggestion is required' });
+      }
+      console.log(suggestion);
+  
+      const newSuggestion = await Suggestion.create({ suggestion });
+  
+      return res.json(new ApiResponse(200, newSuggestion, 'Suggestion Accepted'));
+    } catch (error) {
+      console.error('Error creating suggestion:', error); // Log the error for debugging
+      throw new ApiError(500, 'Internal Server Error');
+    }
+  });
   
   
 
 
 
-export { registerUser,loginUser,logoutUser,userdetail,forgotpassword,forgetPassword,verifyForgetOTP,newPassword};
+export { registerUser,loginUser,logoutUser,userdetail,forgotpassword,forgetPassword,verifyForgetOTP,newPassword,createSuggestion};
