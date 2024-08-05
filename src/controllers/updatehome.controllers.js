@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Products } from "../models/product.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApeError.js";
+import { v2 as cloudinary} from "cloudinary";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import multer from "multer";
 
@@ -52,6 +53,8 @@ const updatelocation=asyncHandler(async(req,res)=>{
                 {location:newlocation},
                 {new:true}
         )
+        
+
 
         if(!homes)
             {
@@ -70,6 +73,53 @@ const updatelocation=asyncHandler(async(req,res)=>{
         
     }
 })
+const deleteHome=asyncHandler(async(req,res)=>{
+    const id=req.query.id;
+    const userid=req.user._id;
+    try {
+       
+        console.log(req.query.id);
+
+        if(!id)throw new ApiError(400,"Homes not Avaialable");
+        const home=await Products.findById(id);
+
+        // const arr=Products.
+    
+    //    console.log(home);
+    //    console.log(home.image);
+        const img=home.image;
+        await Promise.all(img.map(async(temp)=>{
+            await deleteCloudinaryResource(temp);
+
+        }));
+        await Products.findByIdAndDelete(
+            id
+        )
+
+
+            return res.status(200).json(new ApiResponse(200,{},"Product deleted"));
+        
+    } catch (error) {
+        throw res.status(500).json({message:error.message});
+        
+    }
+  })
+
+  const deleteCloudinaryResource = async (cloudPath) => {
+    try {
+        if(!cloudPath) return null;
+        const public_id = extractPublicId(cloudPath, process.env.CLOUDINARY_CLOUD_NAME).split("/");
+        const path = public_id[public_id.length-1];
+        const response = await cloudinary.uploader.destroy(path, {
+            resource_type: "image",
+            invalidate: true,
+        });
+
+        return response;
+    } catch (error) {
+        return error;
+    }
+}
 
  const updatePhoneNum=asyncHandler(async (req,res)=>{
     const id=req.user._id;
@@ -159,4 +209,4 @@ const updatepassword = asyncHandler(async(req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
-export {updateprice,updatelocation,updatePhoneNum,updateavatar,updatepassword};
+export {updateprice,updatelocation,updatePhoneNum,updateavatar,updatepassword,deleteHome};
