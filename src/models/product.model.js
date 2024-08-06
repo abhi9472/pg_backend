@@ -19,7 +19,7 @@ const productSchema=new Schema(
         },
         price:
         {
-            type:Number,
+            type:String,
             required:true
         },
         image:
@@ -38,7 +38,7 @@ const productSchema=new Schema(
         floor:
         {
             type:String,
-            enum:['1','2','3','4'],
+            enum:['1','2','3','4','5'],
             default:'1'
 
         },
