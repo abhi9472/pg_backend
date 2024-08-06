@@ -32,7 +32,7 @@ async function generateAccessRefreshToken(id){
 }
 
 const registerUser =asyncHandler(async (req,res)=>{
-    const{name,email,phoneNum,password,Username,role}=req.body
+    const{name,email,phoneNum,password,role}=req.body
 
     // if(
     //     [name,email,phonenum,password,phoneNum].some((field)=>field.trim()==="")
@@ -42,7 +42,7 @@ const registerUser =asyncHandler(async (req,res)=>{
     //     throw new ApiError(400,"All fields are required")
     // }
     const existeduser=await User.findOne({
-        $or: [{ Username }, { email }]
+        $or: [ { email }]
     })
 
     if(existeduser)
@@ -71,7 +71,7 @@ const registerUser =asyncHandler(async (req,res)=>{
         phoneNum,
         password,
         role,
-        Username:Username.toLowerCase()
+        // Username:Username.toLowerCase()
     })
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -87,15 +87,15 @@ const registerUser =asyncHandler(async (req,res)=>{
 })
 const loginUser=asyncHandler(async(req,res)=>{
     // console.log("inside controller");
-    const {Username,email,password}=req.body
+    const {email,password}=req.body
 
-    if (!Username && !email) {
+    if (!email) {
         throw new ApiError(400, "username or email is required")
     }
     
 
     const user=await User.findOne({
-        $or:[{Username},{email}]
+        $or:[{email}]
     })
 
     if(!user)
