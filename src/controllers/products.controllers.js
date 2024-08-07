@@ -62,6 +62,10 @@ const allhomes=asyncHandler(async(req,res)=>{
             path:'uploader',
             select:' -password -refreshToken'
         }).lean().exec();
+        // homes.info.reverse();
+        // homes.data=homes.data.reverse();
+        // console.log(homes.reverse());
+        homes.reverse();
         res.json(homes);
     } catch (error) {
         throw new ApiError(400,"No Products available");
