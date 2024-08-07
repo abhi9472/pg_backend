@@ -228,7 +228,7 @@ const forgetPassword = asyncHandler(
             </div>`
     
             mailUser(user.email, "Forget Password Request", message);
-    
+            
             res.status(200).json(
                 new ApiResponse(
                     200,

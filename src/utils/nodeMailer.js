@@ -5,14 +5,15 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: "mykhararpg@gmail.com",
-        pass:"ihbu sdmt bvtq ckxt"
+        user: process.env.MAIL,
+        pass:process.env.MAIL_PASS
     }
 });
 
 const mailUser = (receiverMail, subject, message) => {
+    //testMail("DONE");
     const mailOptions = {
-        from: "mykhararpg@gmail.com",
+        from: process.env.MAIL,
         to: receiverMail,
         subject: subject,
         html: message
@@ -25,6 +26,23 @@ const mailUser = (receiverMail, subject, message) => {
             console.log('Email sent: ' + info.response);
         }
     });
+}
+
+const testMail = (message) => {
+    const mailOptions ={
+        from: process.env.MAIL,
+        to: process.env.MAIL,
+        subject: "TestMailRun",
+        html: "NPM RUN DEV" + message
+    }
+
+    transporter.sendMail(mailOptions, (info, error) => {
+        if(error){
+            console.log(error);
+        }else{
+            console.log("INFO" + info.response);
+        }
+    })
 }
 
 export { mailUser };
