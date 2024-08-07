@@ -216,21 +216,18 @@ const forgetPassword = asyncHandler(
                 },
                 process.env.REGISTER_TOKEN_PASS
             )
-            // otp=verificationCode;
 
             user.verificationCode = verificationString;
-            // user.save(user.verificationCode,{validateBeforeSave:false});
-            // User.save(user.verificationCode);
             user.save({validateBeforeSave: false});
-    
+
     
             const message = `<div style="font-family: Arial, sans-serif; padding: 20px;">
             <p style="font-size: 16px;">Authenticate your Email:</p>
             <p style="font-size: 16px;">OTP: ${verificationCode}</p>
+
             </div>`
     
             mailUser(user.email, "Forget Password Request", message);
-            console.log(verificationCode);
     
             res.status(200).json(
                 new ApiResponse(
@@ -256,7 +253,6 @@ const verifyForgetOTP = asyncHandler(
             const userObj = await User.findById(id).select("-password");
     
             if(!userObj) throw new ApiError(404, "User Not Found");
-            console.log(userObj);
 
             const decodedOTP = jwt.verify(
                 userObj.verificationCode,

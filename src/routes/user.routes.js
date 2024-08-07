@@ -55,6 +55,8 @@ router.route("/forgetpassword").post(forgetPassword);
 router.route("/verifyotp").post(verifyForgetOTP);
 router.route("/newpassword").post(newPassword);
 router.route("/suggestion").post(createSuggestion);
+router.route("/newPassword").post(newPassword);
+
 router.route("/deletehome").patch(verifyJwt,isAdmin,deleteHome);
 
 
