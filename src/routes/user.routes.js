@@ -40,7 +40,7 @@ router.route("/addhome").post(verifyJwt,isAdmin, upload.fields([
 ]),
     addhome
 )
-router.route("/userdetail").post(verifyJwt,isAdmin,userdetail);
+router.route("/userdetail").post(verifyJwt,userdetail);
 router.route("/allhomes").post(allhomes);
 router.route("/getuserhome").post(verifyJwt,isAdmin,getuserhome);
 router.route("/gethomedetail").get(gethomedetail);
