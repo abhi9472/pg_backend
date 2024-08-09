@@ -143,7 +143,9 @@ const logoutUser=asyncHandler(async(req,res)=>{
     const options = 
     {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "none",
+        path: "/",
     }
 
 
@@ -228,7 +230,7 @@ const forgetPassword = asyncHandler(
             </div>`
     
             mailUser(user.email, "Forget Password Request", message);
-            
+
             res.status(200).json(
                 new ApiResponse(
                     200,
