@@ -128,27 +128,18 @@ const loginUser=asyncHandler(async(req,res)=>{
 
 
 const logoutUser=asyncHandler(async(req,res)=>{
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $unset:{
-                refreshToken:1
-            }
+    const user = await User.findById(req.user._id).select("-password");
 
-        },
-        {
-            new:true
-        }
-
-    )
+    user.refreshToken = undefined;
+    await user.save({validateBeforeSave: false});
     
-    const options = 
-    {
+    const options = {
+        expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: true,
         sameSite: "none",
         path: "/",
-    }
+    };
 
 
     return res
