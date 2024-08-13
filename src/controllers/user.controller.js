@@ -296,7 +296,7 @@ const verifyForgetOTP = asyncHandler(
   
       const newSuggestion = await Suggestion.create({ suggestion });
   
-      return res.json(new ApiResponse(200, newSuggestion, 'Suggestion Accepted'));
+      return res.json(new ApiResponse(200, newSuggestion, 'Suggestion Accepted Thank You'));
     } catch (error) {
       console.error('Error creating suggestion:', error); // Log the error for debugging
       throw new ApiError(500, 'Internal Server Error');
